@@ -1,4 +1,4 @@
-# ART
+# Art generation using Neural Style Transfer
 
 <hr>
 <img src="z/11.jpg" style="width:500;height:500px;">
