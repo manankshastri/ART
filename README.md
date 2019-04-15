@@ -54,21 +54,66 @@ Here, **n_H, n_W** and **n_C** are the height, width and number of channels of t
 ### 3.2 - Computing the style cost
 ### 3.2.1 - Style matrix
 
-The style matrix is also called a "Gram matrix." In linear algebra, the Gram matrix G of a set of vectors **(v<sub>1</sub>,... ,v<sub>n</sub>)** is the matrix of dot products, whose entries are **G<sub>ij</sub> = v<sub>i<sub><sup>T</sup> v<sub>j</sub> = np.dot(v<sub>i</sub>, v<sub>j</sub>)**. In other words, **G<sub>ij</sub>** compares how similar **v_i** is to **v_j**: If they are highly similar, you would expect them to have a large dot product, and thus for **G<sub>ij</sub>** to be large. 
-  
+The style matrix is also called a "Gram matrix." In linear algebra, the Gram matrix G of a set of vectors **(v<sub>1</sub>,... ,v<sub>n</sub>)** is the matrix of dot products, whose entries are <img src="images/eq2.PNG" style="width:750px;height:200px;">. In other words, **G<sub>ij</sub>** compares how similar **v_i** is to **v_j**: If they are highly similar, you would expect them to have a large dot product, and thus for **G<sub>ij</sub>** to be large. 
+
+In NST, you can compute the Style matrix by multiplying the "unrolled" filter matrix with their transpose:
+
+<img src="images/NST_GM.png" style="width:900px;height:300px;">
+
+The result is a matrix of dimension **(n<sub>C</sub>,n<sub>C</sub>)** where **n<sub>C</sub>** is the number of filters. The value **G<sub>ij</sub>** measures how similar the activations of filter **i** are to the activations of filter **j**. 
+
+One important part of the gram matrix is that the diagonal elements such as **G<sub>ii</sub>** also measures how active filter **i** is. For example, suppose filter **i** is detecting vertical textures in the image. Then **G<sub>ii</sub>** measures how common vertical textures are in the image as a whole: If **G<sub>ii</sub>** is large, this means that the image has a lot of vertical texture. 
+
+By capturing the prevalence of different types of features (**G<sub>ii</sub>**), as well as how much different features occur together (**G<sub>ij</sub>**), the Style matrix **G** measures the style of an image. 
+
+### 3.2.2 - Style cost
+After generating the Style matrix (Gram matrix), your goal will be to minimize the distance between the Gram matrix of the "style" image S and that of the "generated" image G. For now, we are using only a single hidden layer **a<sup>[l]</sup>**, and the corresponding style cost for this layer is defined as: 
+
+<img src="images/eq3.PNG" style="width:750px;height:200px;">
+
+where **G<sup>(S)</sup>** and **G<sup>(G)</sup>** are respectively the Gram matrices of the "style" image and the "generated" image, computed using the hidden layer activations for a particular hidden layer in the network.  
+
+### 3.2.3 - Style Weights
+
+So far we have captured the style from only one layer. We'll get better results if we "merge" style costs from several different layers. Feel free to experiment with different weights to see how it changes the generated image **G**. 
+
+You can combine the style costs for different layers as follows:
+<img src="images/eq4.PNG" style="width:750px;height:200px;">
+
+### 3.3 - Defining the total cost to optimize
+Finally, let's create a cost function that minimizes both the style and the content cost. The formula is: 
+
+**J(G) = &#945; J<sub>content</sub>(C,G) + &#946; J<sub>style</sub>(S,G)**
 
 
+## 4 - Solving the optimization problem
+Finally, let's put everything together to implement Neural Style Transfer!
 
+1. Create an Interactive Session
+2. Load the content image 
+3. Load the style image
+4. Randomly initialize the image to be generated 
+5. Load the VGG19 model
+7. Build the TensorFlow graph:
+    - Run the content image through the VGG19 model and compute the content cost
+    - Run the style image through the VGG19 model and compute the style cost
+    - Compute the total cost
+    - Define the optimizer and the learning rate
+8. Initialize the TensorFlow graph and run it for a large number of iterations, updating the generated image at every step.
 
+***
+Here are few examples:
 
+- The beautiful ruins of the ancient city of Persepolis (Iran) with the style of Van Gogh (The Starry Night)
+<img src="images/perspolis_vangogh.png" style="width:750px;height:300px;">
 
+- The tomb of Cyrus the great in Pasargadae with the style of a Ceramic Kashi from Ispahan.
+<img src="images/pasargad_kashi.png" style="width:750px;height:300px;">
 
+- A scientific study of a turbulent fluid with the style of a abstract blue fluid painting.
+<img src="images/circle_abstract.png" style="width:750px;height:300px;">
 
-
-
-
-
-## Output (Content Image + Style Image = Generated Image)
+## Generated Output (Content Image + Style Image = Generated Image)
 <img src="z/11.jpg" style="width:500;height:500px;">
 <img src="z/22.jpg" style="width:500;height:500px;">
 <img src="z/33.jpg" style="width:500;height:500px;">
