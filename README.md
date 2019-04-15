@@ -35,7 +35,8 @@ We will build the NST algorithm in three steps:
 - Build the style cost function **J<sub>style</sub>(S,G)**
 - Put it together to get **J(G) = &#945; J<sub>content</sub>(C,G) + &#946; J<sub>style</sub>(S,G)**
 
-## 3.1.1 - How do you ensure the generated image G matches the content of the image C?
+### 3.1 - Computing the content cost
+### 3.1.1 - How do you ensure the generated image G matches the content of the image C?
 
 The earlier (shallower) layers of a ConvNet tend to detect lower-level features such as edges and simple textures, and the later (deeper) layers tend to detect higher-level features such as more complex textures as well as object classes. 
 
@@ -43,14 +44,18 @@ We would like the "generated" image G to have similar content as the input image
 
 So, suppose we have picked one particular hidden layer to use. Now, set the image C as the input to the pretrained VGG network, and run forward propagation. Let **a<sup>(C)</sup>** be the hidden layer activations in the layer you had chosen. This will be a **n_H x n_W x n_C** tensor. Repeat this process with the image G: Set G as the input, and run forward progation. Let **a<sup>(G)</sup>** be the corresponding hidden layer activation. We will define as the content cost function as:
 
-<img src="images/NST_LOSS.png" style="width:800px;height:400px;">
+<img src="images/eq1.PNG" style="width:800px;height:400px;">
 
 Here, **n_H, n_W** and **n_C** are the height, width and number of channels of the hidden layer we have chosen, and appear in a normalization term in the cost. For clarity, note that **a<sup>(C)</sup>** and **a<sup>(G)</sup>** are the volumes corresponding to a hidden layer's activations. In order to compute the cost **J<sub>content</sub>(C,G)**, it might also be convenient to unroll these 3D volumes into a 2D matrix, as shown below. (Technically this unrolling step isn't needed to compute **J<sub>content</sub>**, but it will be good practice for when you do need to carry out a similar operation later for computing the style const **J<sub>style</sub>**.)
 
 <img src="images/NST_LOSS.png" style="width:800px;height:400px;">
 
 
+### 3.2 - Computing the style cost
+### 3.2.1 - Style matrix
 
+The style matrix is also called a "Gram matrix." In linear algebra, the Gram matrix G of a set of vectors **(v<sub>1</sub>,... ,v<sub>n</sub>)** is the matrix of dot products, whose entries are **G<sub>ij</sub> = v<sub>i<sub><sup>T</sup> v<sub>j</sub> = np.dot(v<sub>i</sub>, v<sub>j</sub>)**. In other words, **G<sub>ij</sub>** compares how similar **v_i** is to **v_j**: If they are highly similar, you would expect them to have a large dot product, and thus for **G<sub>ij</sub>** to be large. 
+  
 
 
 
