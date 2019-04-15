@@ -101,6 +101,14 @@ Finally, let's put everything together to implement Neural Style Transfer!
     - Define the optimizer and the learning rate
 8. Initialize the TensorFlow graph and run it for a large number of iterations, updating the generated image at every step.
 
+## Things to remember
+- The content cost takes a hidden layer activation of the neural network, and measures how different **a<sup>(C)</sup>** and **a<sup>(G)</sup>** are. 
+- When we minimize the content cost later, this will help make sure **G** has similar content as **C**.
+- The style of an image can be represented using the Gram matrix of a hidden layer's activations. However, we get even better results combining this representation from multiple different layers. This is in contrast to the content representation, where usually using just a single hidden layer is sufficient.
+- Minimizing the style cost will cause the image **G** to follow the style of the image **S**. 
+- The total cost is a linear combination of the content cost **J<sub>content</sub>(C,G)** and the style cost **J<sub>style</sub>(C,G)**
+- **&#945;** and **&#946;** are hyperparameters that control the relative weighting between content and style.
+
 ***
 Here are few examples:
 
@@ -118,3 +126,10 @@ Here are few examples:
 <img src="z/22.jpg" style="width:500;height:500px;">
 <img src="z/33.jpg" style="width:500;height:500px;">
 <img src="z/44.jpg" style="width:500;height:500px;">
+
+## Conclusion
+- Neural Style Transfer is an algorithm that given a content image C and a style image S can generate an artistic image
+- It uses representations (hidden layer activations) based on a pretrained ConvNet. 
+- The content cost function is computed using one hidden layer's activations.
+- The style cost function for one layer is computed using the Gram matrix of that layer's activations. The overall style cost function is obtained using several hidden layers.
+- Optimizing the total cost function results in synthesizing new images. 
