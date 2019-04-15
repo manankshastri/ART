@@ -1,4 +1,4 @@
-# Art generation using Neural Style Transfer
+# Art Generation using Neural Style Transfer
 
 Neural Style Transfer - algorithm created by Gatys et al. (2015) (https://arxiv.org/abs/1508.06576). 
 
